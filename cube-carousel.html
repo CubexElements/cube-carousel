@@ -1,0 +1,206 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+
+Based on flex order concept found at https://blog.madewithenvy.com/the-order-property-flexbox-carousels-87a168567820
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../cube-action/cube-action.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <style>
+      cube-carousel > div {
+        color: #1c1c1c;
+        text-align: center;
+        background: #5c5c5c;
+        padding: 80px 30px;
+      }
+
+      cube-carousel > div:nth-child(even) {
+        background: #7c7c7c;
+      }
+    </style>
+
+    <cube-carousel count="3">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+    </cube-carousel>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+
+<dom-module id="cube-carousel" attributes="count">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        box-sizing: border-box;
+        margin: 35px;
+      }
+
+      :host #carousel {
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: nowrap;
+        position: relative;
+        height: 100%;
+        transform: translateX(var(--cube-carousel-width, 100%));
+      }
+
+      :host([can-scroll]) #carousel {
+        left: calc(-1 * var(--cube-carousel-width, 100%));
+      }
+
+      :host #carousel[is-reversing] {
+        transform: translateX(calc(-1 * var(--cube-carousel-width, 100%)));
+      }
+
+      :host #carousel[is-set] {
+        transform: none;
+        transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      :host #carousel ::slotted(*) {
+        box-sizing: border-box;
+        order: 2;
+        flex: 1 0 100%;
+        flex-basis: var(--cube-carousel-width, 100%);
+        width: var(--cube-carousel-width, 20px);
+        min-width: var(--cube-carousel-width, 20px);
+        height: 100%;
+        min-height: 40px
+      }
+
+      :host([can-scroll]) #prev, :host([can-scroll]) #next {
+        display: block;
+      }
+
+      :host #prev, :host #next {
+        display: none;
+        z-index: 5;
+        position: absolute;
+        top: 50%;
+        margin-top: -22px;
+
+        background: white;
+        border-radius: 1000px;
+
+        opacity: 0.6;
+
+        box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+        0 1px 10px 0 rgba(0, 0, 0, 0.12),
+        0 2px 4px -1px rgba(0, 0, 0, 0.4);
+      }
+
+      :host #prev {
+        left: 12px;
+      }
+
+      :host #next {
+        right: 12px;
+      }
+    </style>
+
+    <div id="prev" on-tap="_prev">
+      <cube-action icon="icons:chevron-left"></cube-action>
+    </div>
+    <div id="next" on-tap="_next">
+      <cube-action icon="icons:chevron-right"></cube-action>
+    </div>
+    <div id="carousel" is-set$="[[_isSet]]" is-reversing$="[[_isReversing]]">
+      <slot id="cSlot"></slot>
+    </div>
+  </template>
+
+  <script>
+    Polymer(
+      {
+        is:         'cube-carousel',
+        properties: {
+          count:     {type: Number, value: 5},
+          canScroll: {type: Boolean, value: false, readOnly: true, reflectToAttribute: true},
+
+          _isSet:       {type: Boolean, value: true},
+          _isReversing: {type: Boolean, value: false},
+
+          _current: {type: Object}
+        },
+        observers:  ['_refreshStyle(count,_current)'],
+
+        ready: function ()
+               {
+                 Polymer.RenderStatus.afterNextRender(
+                   this, function ()
+                   {
+                     var elements = this.querySelectorAll(':scope > *');
+                     if(elements.length - this.count >= 1)
+                     {
+                       this._current = elements[elements.length - 1];
+                       this._current.style.order = 1;
+                       this._setCanScroll(true);
+                     }
+                   }
+                 );
+               },
+        _prev: function ()
+               {
+                 this._move(true);
+               },
+        _next: function ()
+               {
+                 this._move(false);
+               },
+        _move: function (reverse)
+               {
+                 this._isReversing = !!reverse;
+                 this._isSet = false;
+
+                 if(reverse)
+                 {
+                   this._current = this._current.previousElementSibling || this._current.parentNode.lastElementChild;
+                 }
+                 else
+                 {
+                   this._current = this._current.nextElementSibling || this._current.parentNode.firstElementChild;
+                 }
+
+                 this._current.style.order = 1;
+
+                 var next = this._current, i = 2;
+                 while((next = (next.nextElementSibling || next.parentNode.firstElementChild)) && (next != this._current))
+                 {
+                   next.style.order = i++;
+                 }
+                 setTimeout(function () {this._isSet = true;}.bind(this), 50);
+               },
+
+        _refreshStyle: function ()
+                       {
+                         this.updateStyles(
+                           {
+                             '--cube-carousel-width': (100 / this.count) + '%'
+                           }
+                         );
+                       }
+      }
+    );
+  </script>
+</dom-module>

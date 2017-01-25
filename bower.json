@@ -1,5 +1,5 @@
 {
-  "name": "seed-element",
+  "name": "cube-carousel",
   "version": "1.0.0",
   "authors": [
     "Anonymous <anonymous@example.com>"
@@ -11,9 +11,9 @@
     "seed"
   ],
   "private": true,
-  "main": "seed-element.html",
+  "main": "cube-carousel.html",
   "license": "MIT",
-  "homepage": "https://github.com/FortifiElements/seed-element/",
+  "homepage": "https://github.com/FortifiElements/cube-carousel/",
   "ignore": [
     "/.*",
     "/test/",
@@ -21,7 +21,8 @@
     "/node_modules/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#2.0-preview"
+    "polymer": "Polymer/polymer#2.0-preview",
+    "cube-action": "CubexElements/cube-action"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#2.0-preview",
@@ -29,6 +30,11 @@
   },
   "resolutions": {
     "polymer": "2.0-preview",
-    "webcomponentsjs": "v1"
+    "webcomponentsjs": "v1",
+    "iron-flex-layout": "2.0-preview",
+    "paper-styles": "2.0-preview",
+    "iron-selector": "2.0-preview",
+    "iron-meta": "2.0-preview",
+    "iron-resizable-behavior": "2.0-preview"
   }
 }
