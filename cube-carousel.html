@@ -44,16 +44,19 @@ Example:
 @hero hero.svg
 -->
 
-
 <dom-module id="cube-carousel" attributes="count">
   <template>
     <style>
       :host {
         display: block;
         position: relative;
-        overflow: hidden;
         box-sizing: border-box;
-        margin: 35px;
+        @apply --cube-carousel-style;
+      }
+
+      :host #carouselContainer {
+        margin: 24px 28px;
+        overflow: hidden;
       }
 
       :host #carousel {
@@ -93,16 +96,21 @@ Example:
         display: block;
       }
 
+      :host #prev:hover, :host #next:hover {
+        opacity: 0.9;
+      }
+
       :host #prev, :host #next {
         display: none;
         z-index: 9999;
         position: absolute;
         top: 50%;
-        margin-top: -22px;
+        margin-top: -27px;
 
         background: white;
         border-radius: 1000px;
 
+        transition: opacity 200ms;
         opacity: 0.6;
 
         box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
@@ -120,13 +128,15 @@ Example:
     </style>
 
     <div id="prev" on-tap="_prev">
-      <cube-action icon="icons:chevron-left"></cube-action>
+      <cube-action size="34" icon="icons:chevron-left"></cube-action>
     </div>
     <div id="next" on-tap="_next">
-      <cube-action icon="icons:chevron-right"></cube-action>
+      <cube-action size="34" icon="icons:chevron-right"></cube-action>
     </div>
-    <div id="carousel" is-set$="[[_isSet]]" is-reversing$="[[_isReversing]]">
-      <slot id="cSlot"></slot>
+    <div id="carouselContainer">
+      <div id="carousel" is-set$="[[_isSet]]" is-reversing$="[[_isReversing]]">
+        <slot id="cSlot"></slot>
+      </div>
     </div>
   </template>
 
