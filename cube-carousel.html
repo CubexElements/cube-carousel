@@ -158,7 +158,7 @@ Example:
         ready: function ()
                {
                  Polymer.RenderStatus.afterNextRender(
-                   this, function ()
+                   function ()
                    {
                      var elements = this.querySelectorAll(':scope > *');
                      if(elements.length - this.count >= 1)
@@ -167,7 +167,7 @@ Example:
                        this._current.style.order = 1;
                        this._setCanScroll(true);
                      }
-                   }
+                   }.bind(this)
                  );
                },
         _prev: function ()
