@@ -21,20 +21,11 @@
     "/node_modules/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#2.0-preview",
+    "polymer": "Polymer/polymer#1.9 - 2",
     "cube-action": "CubexElements/cube-action"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#2.0-preview",
-    "web-component-tester": "^5.0.0"
-  },
-  "resolutions": {
-    "polymer": "2.0-preview",
-    "webcomponentsjs": "v1",
-    "iron-flex-layout": "2.0-preview",
-    "paper-styles": "2.0-preview",
-    "iron-selector": "2.0-preview",
-    "iron-meta": "2.0-preview",
-    "iron-resizable-behavior": "2.0-preview"
+    "iron-component-page": "PolymerElements/iron-component-page#^2.0.0",
+    "web-component-tester": "^6.0.0"
   }
 }
