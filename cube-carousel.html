@@ -197,7 +197,7 @@ Example:
 
         _refreshCount: function (count)
                        {
-                         var elements = this.querySelectorAll(':scope > *');
+                         var elements = this.queryDistributedElements(':not(dom-repeat):not(dom-if)');
                          if(count > elements.length)
                          {
                            count = elements.length;
