@@ -52,9 +52,13 @@ Example:
         position: relative;
         box-sizing: border-box;
         @apply --cube-carousel-style;
+        --cube-carousel-margin: 20px;
+        --cube-carousel-width: calc(100% / var(--cube-carousel-count, 5));
+        --cube-carousel-offset: calc(calc(-1 * var(--cube-carousel-margin, 20px) * 2) * var(--cube-carousel-count, 5));
       }
 
       :host #carouselContainer {
+        box-sizing: border-box;
         margin: 24px 28px;
         overflow: hidden;
       }
@@ -66,6 +70,7 @@ Example:
         position: relative;
         height: 100%;
         transform: translateX(var(--cube-carousel-width, 100%));
+        margin-right: calc(-1 * var(--cube-carousel-offset, 0));
       }
 
       :host([can-scroll]) #carousel {
@@ -89,7 +94,8 @@ Example:
         width: var(--cube-carousel-width, 20px);
         min-width: var(--cube-carousel-width, 20px);
         height: 100%;
-        min-height: 40px
+        min-height: 40px;
+        margin: var(--cube-carousel-margin, 20px);
       }
 
       :host([can-scroll]) #prev, :host([can-scroll]) #next {
@@ -153,23 +159,8 @@ Example:
 
           _current: {type: Object}
         },
-        observers:  ['_refreshStyle(count,_current)'],
+        observers:  ['_refreshCount(count)'],
 
-        ready: function ()
-               {
-                 Polymer.RenderStatus.afterNextRender(
-                   this, function ()
-                   {
-                     var elements = this.querySelectorAll(':scope > *');
-                     if(elements.length - this.count >= 1)
-                     {
-                       this._current = elements[elements.length - 1];
-                       this._current.style.order = 1;
-                       this._setCanScroll(true);
-                     }
-                   }
-                 );
-               },
         _prev: function ()
                {
                  this._move(true);
@@ -195,20 +186,35 @@ Example:
                  this._current.style.order = 1;
 
                  var next = this._current, i = 2;
-                 while((next = (next.nextElementSibling || next.parentNode.firstElementChild)) && (next != this._current))
+                 while((next = (next.nextElementSibling || next.parentNode.firstElementChild)) && (next !== this._current))
                  {
                    next.style.order = i++;
                  }
                  setTimeout(function () {this._isSet = true;}.bind(this), 50);
                },
 
-        _refreshStyle: function ()
+        _refreshCount: function (count)
                        {
-                         this.updateStyles(
+                         var elements = this.querySelectorAll(':scope > *');
+                         if(count > elements.length)
+                         {
+                           count = elements.length;
+                         }
+
+                         if((!count) || elements.length > count)
+                         {
+                           if(!this._current)
                            {
-                             '--cube-carousel-width': (100 / this.count) + '%'
+                             this._current = elements[elements.length - 1];
+                             this._current.style.order = 1;
                            }
-                         );
+                           this._setCanScroll(true);
+                         }
+                         else
+                         {
+                           this._setCanScroll(false);
+                         }
+                         this.updateStyles({'--cube-carousel-count': count});
                        }
       }
     );
