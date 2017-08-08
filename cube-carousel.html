@@ -52,14 +52,13 @@ Example:
         position: relative;
         box-sizing: border-box;
         @apply --cube-carousel-style;
-        --cube-carousel-margin: 20px;
         --cube-carousel-width: calc(100% / var(--cube-carousel-count, 5));
         --cube-carousel-offset: calc(calc(-1 * var(--cube-carousel-margin, 20px) * 2) * var(--cube-carousel-count, 5));
       }
 
       :host #carouselContainer {
         box-sizing: border-box;
-        margin: 24px 28px;
+        margin: 24px;
         overflow: hidden;
       }
 
@@ -102,6 +101,11 @@ Example:
         display: block;
       }
 
+      cube-action {
+        padding: 0;
+        --cube-icon-padding: 0;
+      }
+
       :host #prev:hover, :host #next:hover {
         opacity: 0.9;
       }
@@ -111,33 +115,28 @@ Example:
         z-index: 9999;
         position: absolute;
         top: 50%;
-        margin-top: -27px;
+        margin-top: -24px;
 
-        background: white;
         border-radius: 1000px;
 
         transition: opacity 200ms;
         opacity: 0.6;
-
-        box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-        0 1px 10px 0 rgba(0, 0, 0, 0.12),
-        0 2px 4px -1px rgba(0, 0, 0, 0.4);
       }
 
       :host #prev {
-        left: 12px;
+        left: 0;
       }
 
       :host #next {
-        right: 12px;
+        right: 0;
       }
     </style>
 
     <div id="prev" on-tap="_prev">
-      <cube-action size="34" icon="icons:chevron-left"></cube-action>
+      <cube-action size="45" icon="icons:chevron-left"></cube-action>
     </div>
     <div id="next" on-tap="_next">
-      <cube-action size="34" icon="icons:chevron-right"></cube-action>
+      <cube-action size="45" icon="icons:chevron-right"></cube-action>
     </div>
     <div id="carouselContainer">
       <div id="carousel" is-set$="[[_isSet]]" is-reversing$="[[_isReversing]]">
@@ -151,15 +150,14 @@ Example:
       {
         is:         'cube-carousel',
         properties: {
-          count:     {type: Number, value: 5},
+          count:     {type: Number, value: 5, observer: '_refreshCount'},
           canScroll: {type: Boolean, value: false, readOnly: true, reflectToAttribute: true},
 
           _isSet:       {type: Boolean, value: true},
           _isReversing: {type: Boolean, value: false},
 
-          _current: {type: Object}
+          _current: {type: Object, observer: '_reorder'}
         },
-        observers:  ['_refreshCount(count)'],
 
         _prev: function ()
                {
@@ -183,15 +181,19 @@ Example:
                    this._current = this._current.nextElementSibling || this._current.parentNode.firstElementChild;
                  }
 
-                 this._current.style.order = 1;
-
-                 var next = this._current, i = 2;
-                 while((next = (next.nextElementSibling || next.parentNode.firstElementChild)) && (next !== this._current))
-                 {
-                   next.style.order = i++;
-                 }
                  setTimeout(function () {this._isSet = true;}.bind(this), 50);
                },
+
+        _reorder: function (current)
+                  {
+                    current.style.order = 1;
+
+                    var next = current, i = 2;
+                    while((next = (next.nextElementSibling || next.parentNode.firstElementChild)) && (next !== current))
+                    {
+                      next.style.order = i++;
+                    }
+                  },
 
         _refreshCount: function (count)
                        {
@@ -201,17 +203,14 @@ Example:
                            count = elements.length;
                          }
 
-                         if((!count) || elements.length > count)
+                         if((count) && elements.length > count)
                          {
-                           if(!this._current)
-                           {
-                             this._current = elements[elements.length - 1];
-                             this._current.style.order = 1;
-                           }
+                           this._current = elements[elements.length - 1];
                            this._setCanScroll(true);
                          }
                          else
                          {
+                           this._current = elements[0];
                            this._setCanScroll(false);
                          }
                          this.updateStyles({'--cube-carousel-count': count});
