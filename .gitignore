@@ -1,2 +1,4 @@
-.idea
-bower_components
+/bower_components
+/node_modules
+/yarn.lock
+/yarn-error.log

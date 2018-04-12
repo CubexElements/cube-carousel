@@ -1,0 +1,22 @@
+{
+  "name": "@kubex/cube-carousel",
+  "flat": true,
+  "version": "3.0.0-pre.1",
+  "description": "An element providing a solution to no problem in particular.",
+  "contributors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "cube-carousel.html",
+  "license": "MIT",
+  "homepage": "https://github.com/FortifiElements/cube-carousel/",
+  "dependencies": {
+    "@kubex/cube-action": "^3.0.0-pre.1",
+    "@polymer/polymer": "^3.0.0-pre.1"
+  },
+  "devDependencies": {}
+}
